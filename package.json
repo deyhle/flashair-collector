@@ -1,0 +1,20 @@
+{
+  "name": "flashair-collector",
+  "version": "0.0.1",
+  "description": "collects photos from flashair cards in the local network, as soon as they got shot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "flashair"
+  ],
+  "author": "Ruben Deyhle <deyhle@entrecode.de>",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^1.26.2",
+    "fs-extra": "^4.0.1",
+    "js-yaml": "^3.9.1",
+    "superagent": "^3.5.2"
+  }
+}
