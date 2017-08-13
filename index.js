@@ -1,79 +1,12 @@
-const superagent = require('superagent');
 const config = require('config');
-const fsExtra = require('fs-extra');
+const Card = require('./Card');
+const downloader = require('./downloader');
 
-async function discoverCameraFolders(host) {
-  let response;
-  try {
-    response = await superagent.get(`http://${host}/command.cgi?op=100&DIR=/DCIM`)
-    .timeout({
-      response: 2000,
-      deadline: 10000,
-    })
-  } catch (e) {
-    if (e.timeout) {
-      throw new Error(`could not connect to ${host}`);
-    }
-    throw e;
-  }
-  ;
-  const cameraFolders = response.text.split('\r\n')
-  .filter(line => /^\/DCIM,/.test(line) && !/^\/DCIM,100__TSB,/.test(line))
-  .map(line => line.split(',')[1]);
-  return cameraFolders;
-}
+const cards = config.cards.map(card => new Card(card));
+downloader.start();
 
-async function getImageList(host, cameraFolder) {
-  const response = await superagent.get(`http://${host}/command.cgi?op=100&DIR=/DCIM/${cameraFolder}`)
-  .timeout({
-    response: 1000,
-    deadline: 5000,
-  })
-  const imageList = response.text.split('\r\n')
-  .filter(line => /^\/DCIM/.test(line))
-  .map(line => line.split(',')[1])
-  .map(filename => ({ filename, url: `http://${host}/DCIM/${cameraFolder}/${filename}` }));
-  return imageList;
-}
-
-async function downloadImage(url, target) {
-  // const stream = fsExtra.createWriteStream(target);
-  const response = await superagent.get(url)
-  .timeout({
-    response: 2000,
-    deadline: 30000,
-  });
-  await fsExtra.writeFile(target, response.body);
-  return;
-}
-
-async function syncImages(name, imageList) {
-  await fsExtra.ensureDir(`target/${name}`);
-  const downloadedImages = await fsExtra.readdir(`target/${name}`);
-  const newImages = imageList.filter(({ filename }) => !downloadedImages.includes(filename));
-  if (newImages.length) {
-    console.log(`${name} has ${newImages.length} new photos, downloading…`);
-  } else {
-    console.log(`${name} has no new photos.`);
-  }
-  await Promise.all(newImages.map(({ filename, url }) =>
-    downloadImage(url, `target/${name}/${filename}`)
-    .then(() => console.log(`downloaded ${name}/${filename}`))
-  ));
-}
-
-async function checkCard({ host, name }) {
-  try {
-    const cameraFolders = await discoverCameraFolders(host);
-    //    console.log(`${name} (${host}) found`);
-    const imageList = await getImageList(host, cameraFolders[0]);
-    await syncImages(name, imageList);
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-setInterval(async () => {
-  Promise.all(config.cards.map(card => checkCard(card)));
-}, 5000);
-
+setInterval(() => {
+  console.log(`Status Update
+  Online: ${cards.filter(card => card.online).map(card => card.name).join(', ')}
+  Offline: ${cards.filter(card => !card.online).map(card => card.name).join(', ')}`);
+}, 8000);

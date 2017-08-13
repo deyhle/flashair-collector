@@ -2,3 +2,4 @@ cards:
   - host: 10.0.0.50
     name: Camera 1
 target: ./target
+pingInterval: 3000
