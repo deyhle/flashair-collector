@@ -9,4 +9,4 @@ setInterval(() => {
   console.log(`Status Update
   Online: ${cards.filter(card => card.online).map(card => card.name).join(', ')}
   Offline: ${cards.filter(card => !card.online).map(card => card.name).join(', ')}`);
-}, 8000);
+}, 60000);

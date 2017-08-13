@@ -13,15 +13,26 @@ async function getImageList(host, cameraFolder) {
     response: 1000,
     deadline: 5000,
   })
-  const imageList = response.text.split('\r\n')
-  .filter(line => /^\/DCIM/.test(line))
-  .map(line => line.split(',')[1])
-  .map(filename => ({ filename, url: `http://${host}/DCIM/${cameraFolder}/${filename}` }));
-  return imageList;
+  .catch((e) => {
+    this.online = false;
+    if (e.timeout || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
+      return;
+      //  throw new Error(`could not connect to ${this.host}`);
+    }
+    throw e;
+  });
+  if (response) {
+    const imageList = response.text.split('\r\n')
+    .filter(line => /^\/DCIM/.test(line))
+    .map(line => line.split(',')[1])
+    .map(filename => ({ filename, url: `http://${host}/DCIM/${cameraFolder}/${filename}` }));
+    return imageList;
+  }
+  return [];
 }
 
 class Card {
-  constructor({host, name}) {
+  constructor({ host, name }) {
     this.host = host;
     this.name = name;
     this[onlineSymbol] = false;
@@ -38,7 +49,7 @@ class Card {
   }
 
   set online(newValue) {
-    if (newValue !==  this[onlineSymbol]) {
+    if (newValue !== this[onlineSymbol]) {
       this[onlineSymbol] = newValue;
       eventstream.emit('onlinestatus', this);
     }
@@ -70,7 +81,7 @@ class Card {
       this.online = false;
       if (e.timeout || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
         return;
-      //  throw new Error(`could not connect to ${this.host}`);
+        //  throw new Error(`could not connect to ${this.host}`);
       }
       throw e;
     });
@@ -93,7 +104,7 @@ class Card {
     .reduce((a, b) => a.concat(b), []);
     const newImages = cameraImages.filter(({ filename }) => !downloadedImages.includes(filename));
     newImages
-    .map(image => Object.assign(image, { card: this} ))
+    .map(image => Object.assign(image, { card: this }))
     .forEach(image => eventstream.emit('image', image));
   }
 

@@ -14,6 +14,13 @@ async function download() {
   .timeout({
     response: 2000,
     deadline: 30000,
+  })
+  .catch((e) => {
+    if (e.timeout || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
+      return;
+      //  throw new Error(`could not connect to ${this.host}`);
+    }
+    throw e;
   });
   await fsExtra.writeFile(`target/${image.card.name}/${image.filename}`, response.body);
   stack.delete(image.url);

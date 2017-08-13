@@ -1,5 +1,7 @@
 cards:
   - host: 10.0.0.50
-    name: Camera 1
+    name: Nikon D90
+  - host: 10.0.0.51
+    name: Nikon 1
 target: ./target
 pingInterval: 3000
