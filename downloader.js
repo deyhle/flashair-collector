@@ -6,6 +6,7 @@ const map = new Map();
 const stack = new Set();
 
 async function downloadImage(image) {
+  console.log(`trying to download ${image.filename} from ${image.card.name}...`);
   const response = await superagent.get(image.url)
     .timeout({
       response: 5000,
@@ -58,5 +59,18 @@ function start() {
   });
   downloadInterval();
 }
+
+eventstream.on('onlinestatus', (card) => {
+  if (card.online) {
+    const imagesFromCardStillToDownload = [...map.entries()]
+    .map(([,value]) => value)
+    .filter(image => image.card === card)
+    .map(image => () => downloadImage(image))
+    .reduce((result, promise) => result.then(promise), Promise.resolve());
+    return imagesFromCardStillToDownload.catch((e) => {
+      console.error(e)
+    });
+  }
+});
 
 module.exports = { start };

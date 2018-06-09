@@ -1,5 +1,4 @@
 const EventEmitter = require('events');
-
 const eventstream = new EventEmitter();
 
 eventstream.on('onlinestatus', (card) => {
