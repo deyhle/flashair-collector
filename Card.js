@@ -79,11 +79,11 @@ class Card {
     })
     .catch((e) => {
       this.online = false;
-      if (e.timeout || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
+      if (e.code === 'ECONNABORTED' || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
         return;
         //  throw new Error(`could not connect to ${this.host}`);
       }
-      throw e;
+      console.error(`error in card ping ${this.name} ${e.stack}`);
     });
     if (response) {
       this.online = true;

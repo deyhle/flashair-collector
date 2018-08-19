@@ -15,11 +15,15 @@ async function downloadImage(image) {
       deadline: 10000,
     })
     .catch((e) => {
-      if (e.timeout || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
-        throw new Error(`could not connect to ${image.card.name} ${e}`);
+      if (e.code === 'ECONNABORTED' || e.code === 'EHOSTDOWN' || e.code === 'ENOTFOUND' || e.code === 'EHOSTUNREACH') {
+        console.log(`could not connect to ${image.card.name} ${e}`); // TODO remove log
+        return;
       }
       throw e;
     });
+  if (!response) {
+    return;
+  }
   await fsExtra.writeFile(targetPath, response.body);
   eventstream.emit('downloaded', image);
 }
