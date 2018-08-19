@@ -18,7 +18,7 @@ async function downloadImage(image) {
       }
       throw e;
     });
-  await fsExtra.writeFile(`target/${image.card.name}/${image.filename}`, response.body);
+  await fsExtra.writeFile(`target/${image.card.name}-${image.filename}`, response.body);
   stack.delete(image.url);
   map.delete(image.url);
   eventstream.emit('downloaded', image);

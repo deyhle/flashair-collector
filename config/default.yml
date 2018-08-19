@@ -1,7 +1,9 @@
 cards:
   - host: 10.0.0.50
-    name: Nikon D90
+    name: Tisch 1
   - host: 10.0.0.51
-    name: Nikon 1
+    name: Tisch 2
+  - host: 10.0.0.53
+    name: Tisch 3
 target: ./target
 pingInterval: 3000
