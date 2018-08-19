@@ -4,7 +4,7 @@ const downloader = require('./downloader');
 
 const cards = config.cards.map(card => new Card(card));
 downloader.start();
-
+console.log('starting');
 setInterval(() => {
   console.log(`Status Update
   Online: ${cards.filter(card => card.online).map(card => card.name).join(', ')}

@@ -97,7 +97,9 @@ class Card {
     if (!this.online || !this.folders.length) {
       return;
     }
-    const downloadedImages = await fsExtra.readdir(`target/${this.name}`);
+    const downloadedImages = (await fsExtra.readdir(`target`))
+      .filter(file => file.startsWith(this.name)).map(file => file.replace(`${this.name}-`, ''));
+    
     const cameraImages = (await Promise.all(
       this.folders.map(folder => getImageList(this.host, folder))
     ))
