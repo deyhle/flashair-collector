@@ -45,8 +45,5 @@ eventstream.on('onlinestatus', (card) => {
     
   }
 });
-(async function() {
-    const stats = await fsExtra.stat('/Users/Hochzeit/Desktop/baaad.JPG');
-    console.log(stats.size);
-})()
+
 module.exports = { start };
