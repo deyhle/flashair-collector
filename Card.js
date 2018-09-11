@@ -45,7 +45,7 @@ class Card {
   }
 
   async setup() {
-    await fsExtra.ensureDir(`target/${this.name}`);
+   // await fsExtra.ensureDir(`target/${this.name}`);
   }
 
   set online(newValue) {
