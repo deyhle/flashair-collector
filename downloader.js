@@ -25,7 +25,12 @@ async function downloadImage(image) {
     return;
   }
   await fsExtra.writeFile(targetPath, response.body);
-  eventstream.emit('downloaded', image);
+  const stats = await fsExtra.stat(targetPath);
+  if (stats.size < 100) {
+    await fsExtra.unlink(targetPath);
+  } else {
+    eventstream.emit('downloaded', image);
+  }
 }
 
 
@@ -40,5 +45,8 @@ eventstream.on('onlinestatus', (card) => {
     
   }
 });
-
+(async function() {
+    const stats = await fsExtra.stat('/Users/Hochzeit/Desktop/baaad.JPG');
+    console.log(stats.size);
+})()
 module.exports = { start };

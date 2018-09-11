@@ -45,7 +45,7 @@ class Card {
   }
 
   async setup() {
-    await fsExtra.ensureDir('target');
+    await fsExtra.ensureDir(`target/${this.name}`);
   }
 
   set online(newValue) {
@@ -104,7 +104,7 @@ class Card {
       this.folders.map(folder => getImageList(this.host, folder))
     ))
     .reduce((a, b) => a.concat(b), []);
-    const newImages = cameraImages.filter(({ filename }) => !downloadedImages.includes(filename));
+    const newImages = cameraImages.filter(({ filename }) => filename.endsWith('JPG') && !downloadedImages.includes(filename));
     newImages
     .map(image => Object.assign(image, { card: this }))
     .forEach(image => eventstream.emit('image', image));

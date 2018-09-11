@@ -5,5 +5,19 @@ cards:
     name: Tisch 2
   - host: 10.0.14.53
     name: Tisch 3
+  - host: 10.0.14.54
+    name: Tisch 4
+  - host: 10.0.14.55
+    name: Tisch 5
+  - host: 10.0.14.56
+    name: Tisch 6
+  - host: 10.0.14.57
+    name: Tisch 7
+  - host: 10.0.14.58
+    name: Tisch 8
+  - host: 10.0.14.59
+    name: Tisch 9
+  - host: 10.0.14.60
+    name: Tisch 10
 target: ./target
 pingInterval: 3000
